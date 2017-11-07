@@ -4,4 +4,4 @@ Please, go to the [Wiki](https://github.com/UNIZAR-30246-WebEngineering/lab3-res
 
 NIA    | User name | Repo | Build Status | Improvement | Score
 -------|-----------|------|--------------|-------------|--------
-
+538798 | Daniel Martínez Martínez | https://github.com/danieluned/lab3-restful-ws/tree/test | https://travis-ci.org/danieluned/lab3-restful-ws.svg?branch=test | [![Build Status](https://travis-ci.org/danieluned/lab3-restful-ws.svg?branch=test)](https://travis-ci.org/danieluned/lab3-restful-ws) | |
