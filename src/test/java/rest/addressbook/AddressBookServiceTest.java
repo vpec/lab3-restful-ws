@@ -22,8 +22,15 @@ import rest.addressbook.domain.Person;
 import static org.junit.Assert.assertEquals;
 
 /**
- * A simple test suite
- *
+ * A simple test suite.
+ * <ul>
+ *   <li>Safe and idempotent: verify that two identical consecutive requests do not modify
+ *   the state of the server.</li>
+ *   <li>Not safe and idempotent: verify that only the first of two identical consecutive
+ *   requests modifies the state of the server.</li>
+ *   <li>Not safe nor idempotent: verify that two identical consecutive requests modify twice
+ *   the state of the server.</li>
+ * </ul>
  */
 public class AddressBookServiceTest {
 
@@ -45,8 +52,8 @@ public class AddressBookServiceTest {
 
 		//////////////////////////////////////////////////////////////////////
 		// Verify that GET /contacts is well implemented by the service, i.e
-		// test that it is safe and idempotent
-		//////////////////////////////////////////////////////////////////////	
+		// complete the test to ensure that it is safe and idempotent
+		//////////////////////////////////////////////////////////////////////
 	}
 
 	@Test
@@ -86,7 +93,7 @@ public class AddressBookServiceTest {
 
 		//////////////////////////////////////////////////////////////////////
 		// Verify that POST /contacts is well implemented by the service, i.e
-		// test that it is not safe and not idempotent
+		// complete the test to ensure that it is not safe and not idempotent
 		//////////////////////////////////////////////////////////////////////	
 				
 	}
@@ -141,7 +148,7 @@ public class AddressBookServiceTest {
 
 		//////////////////////////////////////////////////////////////////////
 		// Verify that GET /contacts/person/3 is well implemented by the service, i.e
-		// test that it is safe and idempotent
+		// complete the test to ensure that it is safe and idempotent
 		//////////////////////////////////////////////////////////////////////	
 	
 	}
@@ -172,8 +179,8 @@ public class AddressBookServiceTest {
 				.get(1).getName());
 
 		//////////////////////////////////////////////////////////////////////
-		// Verify that POST is well implemented by the service, i.e
-		// test that it is not safe and not idempotent
+		// Verify that GET /contacts is well implemented by the service, i.e
+		// complete the test to ensure that it is safe and idempotent
 		//////////////////////////////////////////////////////////////////////	
 	
 	}
@@ -226,7 +233,7 @@ public class AddressBookServiceTest {
 
 		//////////////////////////////////////////////////////////////////////
 		// Verify that PUT /contacts/person/2 is well implemented by the service, i.e
-		// test that it is idempotent
+		// complete the test to ensure that it is idempotent but not safe
 		//////////////////////////////////////////////////////////////////////	
 	
 	}
@@ -259,7 +266,7 @@ public class AddressBookServiceTest {
 
 		//////////////////////////////////////////////////////////////////////
 		// Verify that DELETE /contacts/person/2 is well implemented by the service, i.e
-		// test that it is idempotent
+		// complete the test to ensure that it is idempotent but not safe
 		//////////////////////////////////////////////////////////////////////	
 
 	}
