@@ -1,0 +1,30 @@
+{
+    "run": {
+        "default": "",
+        "items": [
+            {
+                "name": "lab3-restful-wsGoodOne",
+                "projectName": "lab3-restful-wsGoodOne",
+                "workingDirectory": "c:\\Users\\rosario\\Desktop\\ingweb\\lab3-restful-wsGoodOne",
+                "args": [],
+                "vmargs": [],
+                "env": {},
+                "preLaunchTask": ""
+            }
+        ]
+    },
+    "debug": {
+        "default": "",
+        "items": [
+            {
+                "name": "lab3-restful-wsGoodOne",
+                "projectName": "lab3-restful-wsGoodOne",
+                "workingDirectory": "c:\\Users\\rosario\\Desktop\\ingweb\\lab3-restful-wsGoodOne",
+                "args": [],
+                "vmargs": [],
+                "env": {},
+                "preLaunchTask": ""
+            }
+        ]
+    }
+}
