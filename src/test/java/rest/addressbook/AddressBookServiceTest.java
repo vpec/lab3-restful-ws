@@ -20,6 +20,8 @@ import rest.addressbook.domain.AddressBook;
 import rest.addressbook.domain.Person;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
 
 /**
  * A simple test suite.
@@ -44,16 +46,22 @@ public class AddressBookServiceTest {
 
 		// Request the address book
 		Client client = ClientBuilder.newClient();
-		Response response = client.target("http://localhost:8282/contacts")
-				.request().get();
+		Response response = client.target("http://localhost:8282/contacts").request().get();
 		assertEquals(200, response.getStatus());
-		assertEquals(0, response.readEntity(AddressBook.class).getPersonList()
-				.size());
+		assertEquals(0, response.readEntity(AddressBook.class).getPersonList().size());
+		assertEquals(0, ab.getPersonList().size());
+		
 
 		//////////////////////////////////////////////////////////////////////
 		// Verify that GET /contacts is well implemented by the service, i.e
 		// complete the test to ensure that it is safe and idempotent
 		//////////////////////////////////////////////////////////////////////
+		 response = client.target("http://localhost:8282/contacts").request().get();
+		 //two consecutive calls returns the same => it's idempotent
+		assertEquals(200, response.getStatus());
+		//the contents it's not modify => it's safe
+		assertEquals(0, response.readEntity(AddressBook.class).getPersonList().size());
+		assertEquals(0, ab.getPersonList().size());
 	}
 
 	@Test
@@ -69,8 +77,7 @@ public class AddressBookServiceTest {
 
 		// Create a new user
 		Client client = ClientBuilder.newClient();
-		Response response = client.target("http://localhost:8282/contacts")
-				.request(MediaType.APPLICATION_JSON)
+		Response response = client.target("http://localhost:8282/contacts").request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(juan, MediaType.APPLICATION_JSON));
 
 		assertEquals(201, response.getStatus());
@@ -84,6 +91,7 @@ public class AddressBookServiceTest {
 		// Check that the new user exists
 		response = client.target("http://localhost:8282/contacts/person/1")
 				.request(MediaType.APPLICATION_JSON).get();
+
 		assertEquals(200, response.getStatus());
 		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
 		juanUpdated = response.readEntity(Person.class);
@@ -91,11 +99,17 @@ public class AddressBookServiceTest {
 		assertEquals(1, juanUpdated.getId());
 		assertEquals(juanURI, juanUpdated.getHref());
 
+
 		//////////////////////////////////////////////////////////////////////
 		// Verify that POST /contacts is well implemented by the service, i.e
 		// complete the test to ensure that it is not safe and not idempotent
 		//////////////////////////////////////////////////////////////////////	
-				
+		 response = client.target("http://localhost:8282/contacts").request(MediaType.APPLICATION_JSON).post(Entity.entity(juan, MediaType.APPLICATION_JSON));
+		assertEquals(201, response.getStatus());
+		assertNotEquals(juanURI, response.getLocation());
+		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
+		assertNotEquals(1, juan.getId());
+		
 	}
 
 	@Test
@@ -118,39 +132,49 @@ public class AddressBookServiceTest {
 
 		// Create a user
 		Client client = ClientBuilder.newClient();
-		Response response = client.target("http://localhost:8282/contacts")
-				.request(MediaType.APPLICATION_JSON)
+		Response response = client.target("http://localhost:8282/contacts").request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(juan, MediaType.APPLICATION_JSON));
 		assertEquals(201, response.getStatus());
 		assertEquals(juanURI, response.getLocation());
 
 		// Create a second user
-		response = client.target("http://localhost:8282/contacts")
-				.request(MediaType.APPLICATION_JSON)
+		response = client.target("http://localhost:8282/contacts").request(MediaType.APPLICATION_JSON)
 				.post(Entity.entity(maria, MediaType.APPLICATION_JSON));
 		assertEquals(201, response.getStatus());
-		assertEquals(mariaURI, response.getLocation());
+		assertEquals(mariaURI, response.getLocation());		
 		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
+
 		Person mariaUpdated = response.readEntity(Person.class);
 		assertEquals(maria.getName(), mariaUpdated.getName());
 		assertEquals(3, mariaUpdated.getId());
 		assertEquals(mariaURI, mariaUpdated.getHref());
 
 		// Check that the new user exists
-		response = client.target("http://localhost:8282/contacts/person/3")
-				.request(MediaType.APPLICATION_JSON).get();
+		response = client.target("http://localhost:8282/contacts/person/3").request(MediaType.APPLICATION_JSON).get();
 		assertEquals(200, response.getStatus());
+		assertEquals(3, mariaUpdated.getId());
 		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
+
 		mariaUpdated = response.readEntity(Person.class);
 		assertEquals(maria.getName(), mariaUpdated.getName());
-		assertEquals(3, mariaUpdated.getId());
+
 		assertEquals(mariaURI, mariaUpdated.getHref());
 
+	
 		//////////////////////////////////////////////////////////////////////
 		// Verify that GET /contacts/person/3 is well implemented by the service, i.e
 		// complete the test to ensure that it is safe and idempotent
 		//////////////////////////////////////////////////////////////////////	
-	
+		response = client.target("http://localhost:8282/contacts/person/3").request(MediaType.APPLICATION_JSON).get();
+		assertEquals(200, response.getStatus());
+		assertEquals(3, mariaUpdated.getId());
+		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
+
+		mariaUpdated = response.readEntity(Person.class);
+		assertEquals(maria.getName(), mariaUpdated.getName());
+
+		assertEquals(mariaURI, mariaUpdated.getHref());
+		//the state is the same and the content is the same => safe and idempotent
 	}
 
 	@Test
@@ -168,21 +192,24 @@ public class AddressBookServiceTest {
 
 		// Test list of contacts
 		Client client = ClientBuilder.newClient();
-		Response response = client.target("http://localhost:8282/contacts")
-				.request(MediaType.APPLICATION_JSON).get();
+		Response response = client.target("http://localhost:8282/contacts").request(MediaType.APPLICATION_JSON).get();
 		assertEquals(200, response.getStatus());
 		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
-		AddressBook addressBookRetrieved = response
-				.readEntity(AddressBook.class);
-		assertEquals(2, addressBookRetrieved.getPersonList().size());
-		assertEquals(juan.getName(), addressBookRetrieved.getPersonList()
-				.get(1).getName());
 
+		AddressBook addressBookRetrieved = response	.readEntity(AddressBook.class);
+		assertEquals(2, addressBookRetrieved.getPersonList().size());
+		assertEquals(juan.getName(), addressBookRetrieved.getPersonList().get(1).getName());
 		//////////////////////////////////////////////////////////////////////
 		// Verify that GET /contacts is well implemented by the service, i.e
 		// complete the test to ensure that it is safe and idempotent
 		//////////////////////////////////////////////////////////////////////	
-	
+		response = client.target("http://localhost:8282/contacts").request(MediaType.APPLICATION_JSON).get();
+		assertEquals(200, response.getStatus());
+		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
+
+		assertEquals(response.readEntity(AddressBook.class).getPersonList().size(), addressBookRetrieved.getPersonList().size());
+		assertEquals(juan.getName(), addressBookRetrieved.getPersonList().get(1).getName());
+		//same size and same status => safe and idempotent
 	}
 
 	@Test
@@ -204,10 +231,7 @@ public class AddressBookServiceTest {
 		Person maria = new Person();
 		maria.setName("Maria");
 		Client client = ClientBuilder.newClient();
-		Response response = client
-				.target("http://localhost:8282/contacts/person/2")
-				.request(MediaType.APPLICATION_JSON)
-				.put(Entity.entity(maria, MediaType.APPLICATION_JSON));
+		Response response = client.target("http://localhost:8282/contacts/person/2").request(MediaType.APPLICATION_JSON).put(Entity.entity(maria, MediaType.APPLICATION_JSON));
 		assertEquals(200, response.getStatus());
 		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
 		Person juanUpdated = response.readEntity(Person.class);
@@ -216,8 +240,7 @@ public class AddressBookServiceTest {
 		assertEquals(juanURI, juanUpdated.getHref());
 
 		// Verify that the update is real
-		response = client.target("http://localhost:8282/contacts/person/2")
-				.request(MediaType.APPLICATION_JSON).get();
+		response = client.target("http://localhost:8282/contacts/person/2").request(MediaType.APPLICATION_JSON).get();
 		assertEquals(200, response.getStatus());
 		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
 		Person mariaRetrieved = response.readEntity(Person.class);
@@ -226,15 +249,19 @@ public class AddressBookServiceTest {
 		assertEquals(juanURI, mariaRetrieved.getHref());
 
 		// Verify that only can be updated existing values
-		response = client.target("http://localhost:8282/contacts/person/3")
-				.request(MediaType.APPLICATION_JSON)
-				.put(Entity.entity(maria, MediaType.APPLICATION_JSON));
+		response = client.target("http://localhost:8282/contacts/person/3").request(MediaType.APPLICATION_JSON)	.put(Entity.entity(maria, MediaType.APPLICATION_JSON));
 		assertEquals(400, response.getStatus());
 
 		//////////////////////////////////////////////////////////////////////
 		// Verify that PUT /contacts/person/2 is well implemented by the service, i.e
 		// complete the test to ensure that it is idempotent but not safe
 		//////////////////////////////////////////////////////////////////////	
+		 response = client.target("http://localhost:8282/contacts/person/2").request(MediaType.APPLICATION_JSON).put(Entity.entity(maria, MediaType.APPLICATION_JSON));
+		assertEquals(200, response.getStatus());
+		assertEquals(MediaType.APPLICATION_JSON_TYPE, response.getMediaType());
+		assertEquals(maria.getName(), mariaRetrieved.getName());
+		assertEquals(2, mariaRetrieved.getId());
+		//after 2 put the state is the same =>idempotent but not safe
 	
 	}
 
@@ -252,22 +279,35 @@ public class AddressBookServiceTest {
 		ab.getPersonList().add(juan);
 		launchServer(ab);
 
-		// Delete a user
 		Client client = ClientBuilder.newClient();
-		Response response = client
-				.target("http://localhost:8282/contacts/person/2").request()
-				.delete();
+	
+	   
+		Response response = client.target("http://localhost:8282/contacts/person/2").request().get();
+		assertEquals(200, response.getStatus());
+
+		response = client.target("http://localhost:8282/contacts").request().get();
+		assertEquals(2, response.readEntity(AddressBook.class).getPersonList().size());
+
+		// Delete a user
+		 response = client.target("http://localhost:8282/contacts/person/2").request().delete();
 		assertEquals(204, response.getStatus());
+		
+		response = client.target("http://localhost:8282/contacts").request().get();
+		assertEquals(1, response.readEntity(AddressBook.class).getPersonList().size());
 
 		// Verify that the user has been deleted
-		response = client.target("http://localhost:8282/contacts/person/2")
-				.request().delete();
+		response = client.target("http://localhost:8282/contacts/person/2").request().delete();
 		assertEquals(404, response.getStatus());
+
+		response = client.target("http://localhost:8282/contacts").request().get();
+		assertEquals(1, response.readEntity(AddressBook.class).getPersonList().size());
 
 		//////////////////////////////////////////////////////////////////////
 		// Verify that DELETE /contacts/person/2 is well implemented by the service, i.e
 		// complete the test to ensure that it is idempotent but not safe
-		//////////////////////////////////////////////////////////////////////	
+		//////////////////////////////////////////////////////////////////////
+		
+		//the state change the first time but not the second => idempotent but not safe
 
 	}
 
