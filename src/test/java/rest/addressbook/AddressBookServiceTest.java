@@ -19,6 +19,7 @@ import rest.addressbook.config.ApplicationConfig;
 import rest.addressbook.domain.AddressBook;
 import rest.addressbook.domain.Person;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -54,6 +55,27 @@ public class AddressBookServiceTest {
 		// Verify that GET /contacts is well implemented by the service, i.e
 		// complete the test to ensure that it is safe and idempotent
 		//////////////////////////////////////////////////////////////////////
+
+		// Add a new person to the Address Book (POST)
+		Person person = new Person();
+		person.setName("Person name");
+		person.setEmail("person@gmail.com");
+		client.target("http://localhost:8282/contacts")
+				.request(MediaType.APPLICATION_JSON)
+				.post(Entity.entity(person, MediaType.APPLICATION_JSON));
+
+		// First GET request
+		Response response1 = client.target("http://localhost:8282/contacts")
+				.request().get();
+		assertEquals(200, response1.getStatus());
+
+		// Second GET request
+		Response response2 = client.target("http://localhost:8282/contacts")
+				.request().get();
+		assertEquals(200, response2.getStatus());
+
+		// Assert that system status (AddressBook) is the same in both requests
+		assertEquals(response1.readEntity(AddressBook.class), response2.readEntity(AddressBook.class));
 	}
 
 	@Test

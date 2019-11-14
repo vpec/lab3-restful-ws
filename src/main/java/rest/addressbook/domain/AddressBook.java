@@ -47,4 +47,27 @@ public class AddressBook {
     nextId++;
     return oldValue;
   }
+
+
+  // Overriding equals() to compare two AddressBook objects 
+  @Override
+  public boolean equals(Object o) { 
+
+      // If the object is compared with itself then return true   
+      if (o == this) { 
+          return true; 
+      } 
+
+      /* Check if o is an instance of Complex or not 
+        "null instanceof [type]" also returns false */
+      if (!(o instanceof AddressBook)) { 
+          return false; 
+      } 
+        
+      // typecast o to Complex so that we can compare data members  
+      AddressBook c = (AddressBook) o; 
+      
+      // Compare the data members and return accordingly
+      return this.getNextId() == c.getNextId() && this.personList.equals(c.personList);
+    } 
 }
