@@ -4,5 +4,5 @@ Please, go to the [Wiki](https://github.com/UNIZAR-30246-WebEngineering/lab3-res
 
 | NIA    | User name | Repo | Build Status | Improvement | Score
 |--------|-----------|------|--------------|-------------|--------
-|        |           |      |              |             |
+|736478  | [Víctor Martínez Batlle](https://github.com/vmbatlle/) | [Test branch](https://github.com/vmbatlle/lab3-restful-ws/tree/test)    | [![Build Status](https://travis-ci.org/vmbatlle/lab3-restful-ws.svg?branch=test)](https://travis-ci.org/vmbatlle/lab3-restful-ws) | From previous Lab | :gift:    
 
