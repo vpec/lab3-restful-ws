@@ -4,5 +4,5 @@ Please, go to the [Wiki](https://github.com/UNIZAR-30246-WebEngineering/lab3-res
 
 | NIA    | User name | Repo | Build Status | Improvement | Score
 |--------|-----------|------|--------------|-------------|--------
-|        |           |      |              |             |
+|741294  | Victor Peñasco | [Test Branch](https://github.com/vpec/lab3-restful-ws/tree/test)    | [![Build Status](https://travis-ci.org/vpec/lab3-restful-ws.svg?branch=test)](https://travis-ci.org/vpec/lab3-restful-ws/tree/test)|             |
 
