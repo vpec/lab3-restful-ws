@@ -80,16 +80,15 @@ public class Person {
         
       // typecast o to Person so that we can compare data members  
       Person c = (Person) o; 
-      
       // Compare the data members and return accordingly
-      return (this.name == null && c.name == null)
-                  || (this.name != null && this.name.equals(c.name))
+      return ((this.name == null && c.name == null)
+                  || (this.name != null && this.name.equals(c.name)))
           && this.id == c.id
-          && (this.email == null && c.email == null)
-                  || (this.email != null && this.email.equals(c.email))
-          && (this.href == null && c.href == null)
-                  || (this.href != null && this.href.equals(c.href))
-          && (this.phoneList == null && c.phoneList == null)
-                  || (this.phoneList != null && this.phoneList.equals(c.phoneList));
+          && ((this.email == null && c.email == null)
+                  || (this.email != null && this.email.equals(c.email)))
+          && ((this.href == null && c.href == null)
+                  || (this.href != null && this.href.equals(c.href)))
+          && ((this.phoneList == null && c.phoneList == null)
+                  || (this.phoneList != null && this.phoneList.equals(c.phoneList)));
     } 
 }
